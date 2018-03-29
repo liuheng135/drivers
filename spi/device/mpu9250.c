@@ -831,13 +831,13 @@ static int mpu9250_read(struct hal_dev_s *dev,  void* buffer, int size,int pos)
     while(num--){
         mpu9250_measure(dev,&rept);
 		
-		imu->acc.accel[0] = rept.acc[0] * config->acc_scale;
-		imu->acc.accel[1] = rept.acc[1] * config->acc_scale;
-		imu->acc.accel[2] = rept.acc[2] * config->acc_scale;
+		imu->acc.data[0] = rept.acc[0] * config->acc_scale;
+		imu->acc.data[1] = rept.acc[1] * config->acc_scale;
+		imu->acc.data[2] = rept.acc[2] * config->acc_scale;
 		
-		imu->gyro.gyro[0] = rept.gyro[0] * config->gyro_scale;
-		imu->gyro.gyro[1] = rept.gyro[1] * config->gyro_scale;
-		imu->gyro.gyro[2] = rept.gyro[2] * config->gyro_scale;
+		imu->gyro.data[0] = rept.gyro[0] * config->gyro_scale;
+		imu->gyro.data[1] = rept.gyro[1] * config->gyro_scale;
+		imu->gyro.data[2] = rept.gyro[2] * config->gyro_scale;
 
 		imu->acc.temperature  = 36.53f + (float)rept.temp / 340.0f;
 		imu->gyro.temperature = imu->acc.temperature;

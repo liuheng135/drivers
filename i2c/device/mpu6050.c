@@ -151,13 +151,13 @@ int mpu6050_read(struct hal_dev_s *dev, void *buffer, int size,int pos)
 		gyro[1] = buff[10] << 8|buff[11];
 		gyro[2] = buff[12] << 8|buff[13];
 
-		imu->acc.accel[0] = acc[0] * config->acc_scale;
-		imu->acc.accel[1] = acc[1] * config->acc_scale;
-		imu->acc.accel[2] = acc[2] * config->acc_scale;
+		imu->acc.data[0] = acc[0] * config->acc_scale;
+		imu->acc.data[1] = acc[1] * config->acc_scale;
+		imu->acc.data[2] = acc[2] * config->acc_scale;
 		
-		imu->gyro.gyro[0] = gyro[0] * config->gyro_scale;
-		imu->gyro.gyro[1] = gyro[1] * config->gyro_scale;
-		imu->gyro.gyro[2] = gyro[2] * config->gyro_scale;
+		imu->gyro.data[0] = gyro[0] * config->gyro_scale;
+		imu->gyro.data[1] = gyro[1] * config->gyro_scale;
+		imu->gyro.data[2] = gyro[2] * config->gyro_scale;
 
 		imu->acc.temperature  = 36.53f + (float)temp / 340.0f;
 		imu->gyro.temperature = imu->acc.temperature;

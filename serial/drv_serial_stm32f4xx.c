@@ -97,6 +97,11 @@ static void stm32f4_irq_config(struct hal_serial_s *serial)
 	USART_ITConfig(port->UARTx, USART_IT_TXE, DISABLE);
 	USART_ITConfig(port->UARTx, USART_IT_RXNE, ENABLE);
 	
+	/* clear interrupt */
+    USART_ClearITPendingBit(port->UARTx, USART_IT_RXNE);
+	/* clear interrupt */
+    USART_ClearITPendingBit(port->UARTx, USART_IT_TC);
+	
 	NVIC_EnableIRQ(port->irq);
 	/*
     NVIC_InitStructure.NVIC_IRQChannel = port->DMA_irq;

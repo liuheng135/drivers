@@ -17,17 +17,17 @@ struct baro_report_s{
 };
 
 struct acc_report_s{
-	float accel[3];       /* unit: m/s^2  */ 
+	float data[3];       /* unit: m/s^2  */ 
 	float temperature;    /* unit: degree  */
 };
 
 struct gyro_report_s{
-	float gyro[3];        /* unit: rad/s  */ 
+	float data[3];        /* unit: rad/s  */ 
 	float temperature;    /* unit: degree  */
 };
 
 struct mag_report_s{
-	float mag[3];        /* unit: mguess  */ 
+	float data[3];        /* unit: mguess  */ 
 	float temperature;   /* unit: degree  */
 };
 

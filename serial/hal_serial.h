@@ -69,12 +69,12 @@ struct hal_serial_s
 	tcflag_t             tc_oflag;     /* Output modes */
 	tcflag_t             tc_lflag;     /* Local modes */
 #endif
-	serial_lock_t        lock;
+	volatile serial_lock_t  lock;
 	
 #ifdef CONFIG_SERIAL_USING_OS
 
 #else
-	int                  tx_buf_empty;
+	volatile int         tx_buf_empty;
 #endif
 	
 	struct serial_buffer_s recv_buffer;

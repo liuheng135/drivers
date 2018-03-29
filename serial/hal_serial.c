@@ -208,11 +208,11 @@ static int serial_write(struct hal_dev_s *dev, const void *buffer, int buflen,in
 			
 			serial_buffer_put(&serial->send_buffer,chbuf,buflen);
 			serial->enable_irq(serial,SERIAL_INT_TXDONE);
-			serial_buffer_get(&serial->send_buffer,&ch,1);		
 #ifdef CONFIG_SERIAL_USING_OS
 #else
 			while(serial->tx_buf_empty == 0);
 			serial->tx_buf_empty = 0;
+			serial_buffer_get(&serial->send_buffer,&ch,1);	
 			ret = serial->putc(serial,ch);
 #endif
 		}else if(serial->dev.open_flag & HAL_DEV_BLOCK){
@@ -267,6 +267,7 @@ void serial_isr(struct hal_serial_s *serial,int event)
 		case SERIAL_INT_TXDONE:
 			if(serial_buffer_get(&serial->send_buffer,&ch,1) == 1){
 				serial->putc(serial,ch);
+				serial_buffer_put(&serial->recv_buffer,&ch,1);
 			}else{
 				/* all bytes in buffer are send by TC interrupt, disable tx done interrupt */
 				serial->tx_buf_empty = 1;
