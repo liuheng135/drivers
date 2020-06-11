@@ -8,7 +8,7 @@ struct stm32f4xx_spi_gpio
 	GPIO_TypeDef* port;
 	uint16_t      GPIO_PinSource;
 	uint8_t       GPIO_AF;
-	uint32_t      RCC_APB2Periph;
+	uint32_t      rcc;
 };
 
 struct stm32f4xx_spi_adapter{
@@ -24,9 +24,9 @@ static void  stm32f4_spi_gpio_init(struct stm32f4xx_spi_adapter *dev)
 {
 	GPIO_InitTypeDef GPIO_InitStructure;
 	
-	RCC_AHB1PeriphClockCmd((dev->mosi.RCC_APB2Periph) |
-						   (dev->miso.RCC_APB2Periph) |
-						   (dev->sck.RCC_APB2Periph)  , ENABLE);
+	RCC_AHB1PeriphClockCmd((dev->mosi.rcc) |
+						   (dev->miso.rcc) |
+						   (dev->sck.rcc)  , ENABLE);
 
 	GPIO_PinAFConfig(dev->mosi.port, dev->mosi.GPIO_PinSource,dev->mosi.GPIO_AF);
 	GPIO_PinAFConfig(dev->miso.port, dev->miso.GPIO_PinSource,dev->miso.GPIO_AF);
@@ -267,7 +267,7 @@ struct stm32f4xx_spi_gpio spi1_mosi_pina = {
 	.port 			= GPIOA,
 	.GPIO_PinSource = GPIO_PinSource5,
 	.GPIO_AF		= GPIO_AF_SPI1,
-	.RCC_APB2Periph = RCC_AHB1Periph_GPIOA,
+	.rcc = RCC_AHB1Periph_GPIOA,
 };
 
 struct stm32f4xx_spi_gpio spi1_miso_pina = {
@@ -275,7 +275,7 @@ struct stm32f4xx_spi_gpio spi1_miso_pina = {
 	.port 			= GPIOA,
 	.GPIO_PinSource = GPIO_PinSource6,
 	.GPIO_AF		= GPIO_AF_SPI1,
-	.RCC_APB2Periph = RCC_AHB1Periph_GPIOA,
+	.rcc = RCC_AHB1Periph_GPIOA,
 };
 
 struct stm32f4xx_spi_gpio spi1_sck_pina = {
@@ -283,7 +283,7 @@ struct stm32f4xx_spi_gpio spi1_sck_pina = {
 	.port 			= GPIOA,
 	.GPIO_PinSource = GPIO_PinSource7,
 	.GPIO_AF		= GPIO_AF_SPI1,
-	.RCC_APB2Periph = RCC_AHB1Periph_GPIOA,
+	.rcc = RCC_AHB1Periph_GPIOA,
 };
 /* end of stm32 SPI1 GPIO define */
 
@@ -297,7 +297,7 @@ struct stm32f4xx_spi_gpio spi2_mosi_pina = {
 	.port 			= GPIOB,
 	.GPIO_PinSource = GPIO_PinSource15,
 	.GPIO_AF		= GPIO_AF_SPI2,
-	.RCC_APB2Periph = RCC_AHB1Periph_GPIOB,
+	.rcc = RCC_AHB1Periph_GPIOB,
 };
 
 struct stm32f4xx_spi_gpio spi2_miso_pina = {
@@ -305,7 +305,7 @@ struct stm32f4xx_spi_gpio spi2_miso_pina = {
 	.port 			= GPIOB,
 	.GPIO_PinSource = GPIO_PinSource14,
 	.GPIO_AF		= GPIO_AF_SPI2,
-	.RCC_APB2Periph = RCC_AHB1Periph_GPIOB,
+	.rcc = RCC_AHB1Periph_GPIOB,
 };
 
 struct stm32f4xx_spi_gpio spi2_sck_pina = {
@@ -313,7 +313,7 @@ struct stm32f4xx_spi_gpio spi2_sck_pina = {
 	.port 			= GPIOB,
 	.GPIO_PinSource = GPIO_PinSource13,
 	.GPIO_AF		= GPIO_AF_SPI2,
-	.RCC_APB2Periph = RCC_AHB1Periph_GPIOB,
+	.rcc = RCC_AHB1Periph_GPIOB,
 };
 /* end of stm32 SPI2 GPIO define */
 struct stm32f4xx_spi_adapter stm32f4_spi2; 
@@ -326,7 +326,7 @@ struct stm32f4xx_spi_gpio spi3_mosi_pina = {
 	.port 			= GPIOC,
 	.GPIO_PinSource = GPIO_PinSource12,
 	.GPIO_AF		= GPIO_AF_SPI3,
-	.RCC_APB2Periph = RCC_AHB1Periph_GPIOC,
+	.rcc = RCC_AHB1Periph_GPIOC,
 };
 
 struct stm32f4xx_spi_gpio spi3_miso_pina = {
@@ -334,7 +334,7 @@ struct stm32f4xx_spi_gpio spi3_miso_pina = {
 	.port 			= GPIOC,
 	.GPIO_PinSource = GPIO_PinSource11,
 	.GPIO_AF		= GPIO_AF_SPI3,
-	.RCC_APB2Periph = RCC_AHB1Periph_GPIOC,
+	.rcc = RCC_AHB1Periph_GPIOC,
 };
 
 struct stm32f4xx_spi_gpio spi3_sck_pina = {
@@ -342,7 +342,7 @@ struct stm32f4xx_spi_gpio spi3_sck_pina = {
 	.port 			= GPIOC,
 	.GPIO_PinSource = GPIO_PinSource10,
 	.GPIO_AF		= GPIO_AF_SPI3,
-	.RCC_APB2Periph = RCC_AHB1Periph_GPIOC,
+	.rcc = RCC_AHB1Periph_GPIOC,
 };
 /* end of stm32 SPI3 GPIO define */
 struct stm32f4xx_spi_adapter stm32f4_spi3; 

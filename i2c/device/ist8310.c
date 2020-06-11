@@ -4,19 +4,19 @@
 #include <hal_sensor.h>
 
 #define SENSOR_NAME "ist8310"
-#define SENSOR_I2C_SLAVE_ADDRESS 0x0E
-#define IST8310_DATA_UPDATE_TIME 0.005
+#define SENSOR_I2C_SLAVE_ADDRESS   0x0E
+#define IST8310_DATA_UPDATE_TIME   0.005
 
 
-#define STM8s_ID_VAL	0xFF
+#define STM8s_ID_VAL	           0xFF
 #define IST8310_WHO_AM_I           0x00
 #define IST8310_WHO_AM_I_VALUE     0x10
 
 #define IST8310_STATUS_REGISTER1   0x02
-#define STAT1_DRDY_SHFITS      0x0
-#define STAT1_DRDY             (1 << STAT1_DRDY_SHFITS)
-#define STAT1_DRO_SHFITS       0x1
-#define STAT1_DRO              (1 << STAT1_DRO_SHFITS)
+#define STAT1_DRDY_SHFITS          0x0
+#define STAT1_DRDY                (1 << STAT1_DRDY_SHFITS)
+#define STAT1_DRO_SHFITS           0x1
+#define STAT1_DRO                 (1 << STAT1_DRO_SHFITS)
 
 #define IST8310_OUTPUT_VALUE_X_L   0x03
 #define IST8310_OUTPUT_VALUE_X_H   0x04
@@ -26,11 +26,11 @@
 #define IST8310_OUTPUT_VALUE_Z_H   0x08
 
 #define IST8310_STATUS_REGISTER2   0x09
-#define STAT2_INT_SHFITS       3
+#define STAT2_INT_SHFITS            3
 #define STAT2_INT              (1 << STAT2_INT_SHFITS)
 
 #define IST8310_CONTROL_REGISTER1  0x0A
-#define CTRL1_MODE_SHFITS      0
+#define CTRL1_MODE_SHFITS           0
 #define CTRL1_MODE_STDBY       (0 << CTRL1_MODE_SHFITS)
 #define CTRL1_MODE_SINGLE      (1 << CTRL1_MODE_SHFITS)
 
@@ -77,6 +77,8 @@ int ist8310_init(struct hal_dev_s *dev)
 {
 	uint8_t reg_val;
 	hal_i2c_read_from_addr(dev,IST8310_WHO_AM_I,&reg_val,1);
+	hal_i2c_read_from_addr(dev,IST8310_WHO_AM_I,&reg_val,1);
+	hal_i2c_read_from_addr(dev,IST8310_WHO_AM_I,&reg_val,1);
 	if(reg_val != IST8310_WHO_AM_I_VALUE){
 		return -1;
 	}
@@ -90,7 +92,6 @@ int ist8310_init(struct hal_dev_s *dev)
 	hal_i2c_write_to_addr(dev,IST8310_CONTROL_REGISTER3, &reg_val,1); //enter standby
 	
 	return 0;
-
 }
 
 int ist8310_open(struct hal_dev_s *dev, uint16_t oflag)

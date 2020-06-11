@@ -212,8 +212,8 @@ struct stm32f4xx_uart_gpio uart1_rxd_pin_2 = {
 
 struct stm32f4xx_uart_port uart1 = {
 	.UARTx           = USART1,
-	.txd             = &uart1_txd_pin_1,
-	.rxd             = &uart1_rxd_pin_1,
+	.txd             = &uart1_txd_pin_2,
+	.rxd             = &uart1_rxd_pin_2,
 	.rcc_peri        = RCC_APB2Periph_USART1, 
 	.rcc_cmd         = RCC_APB2PeriphClockCmd,
 	.irq_pre_pri     = 14,

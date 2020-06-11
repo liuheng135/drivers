@@ -125,8 +125,13 @@ static int serial_open( struct hal_dev_s *dev, uint16_t oflag)
 			ret = -1;
 		}
 	
-		if(ret > 0)
+		if(ret > 0){
 			dev->open_flag = oflag & 0xff;
+        }
+        
+        if(oflag & HAL_DEV_INT_RX){
+            serial->enable_irq(serial,SERIAL_INT_RXDONE);
+        }
 		
 		serial_unlock(serial->lock);
 	}
@@ -195,26 +200,19 @@ static int serial_write(struct hal_dev_s *dev, const void *buffer, int buflen,in
 	if(serial_lock(serial->lock,10) == 0){
 		if(serial->dev.open_flag & HAL_DEV_DMA_TX){
 			if(serial->dma_send != NULL){
+				while(serial->tx_buf_empty == 0);
 				serial->enable_irq(serial,SERIAL_INT_DMATXDONE);
 				serial_buffer_put(&serial->send_buffer,chbuf,buflen);
-#ifdef CONFIG_SERIAL_USING_OS
-#else			
-				while(serial->tx_buf_empty == 0);
-                serial->tx_buf_empty = 0;
-#endif
+				serial->tx_buf_empty = 0;
 				ret = serial->dma_send(serial,buflen);
 			}
 		}else if(serial->dev.open_flag & HAL_DEV_INT_TX){
-			
-			serial_buffer_put(&serial->send_buffer,chbuf,buflen);
-			serial->enable_irq(serial,SERIAL_INT_TXDONE);
-#ifdef CONFIG_SERIAL_USING_OS
-#else
 			while(serial->tx_buf_empty == 0);
+			serial_buffer_put(&serial->send_buffer,chbuf,buflen);
 			serial->tx_buf_empty = 0;
 			serial_buffer_get(&serial->send_buffer,&ch,1);	
+			serial->enable_irq(serial,SERIAL_INT_TXDONE);
 			ret = serial->putc(serial,ch);
-#endif
 		}else if(serial->dev.open_flag & HAL_DEV_BLOCK){
 			if(serial->putc != NULL){
 				serial->disable_irq(serial,SERIAL_INT_TXDONE);
@@ -267,7 +265,6 @@ void serial_isr(struct hal_serial_s *serial,int event)
 		case SERIAL_INT_TXDONE:
 			if(serial_buffer_get(&serial->send_buffer,&ch,1) == 1){
 				serial->putc(serial,ch);
-				serial_buffer_put(&serial->recv_buffer,&ch,1);
 			}else{
 				/* all bytes in buffer are send by TC interrupt, disable tx done interrupt */
 				serial->tx_buf_empty = 1;

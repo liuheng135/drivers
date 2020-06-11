@@ -65,8 +65,7 @@ struct hal_spi_msg_s{
 struct hal_spi_dev_s{
 	struct hal_dev_s dev;
 	int  port;
-	void (*cs_take)(void);
-	void (*cs_release)(void);
+	int  cs_id;
 	struct hal_spi_cfg_s cfg;
 	void *user_data;
 };
@@ -75,9 +74,12 @@ struct hal_spi_adapter_s{
 	int  (*init)(struct hal_spi_adapter_s *adpt);
 	void (*configure)(struct hal_spi_adapter_s *adpt,struct hal_spi_cfg_s *cfg);
 	int  (*transfer)(struct hal_spi_adapter_s *adpt,struct hal_spi_msg_s *msg);
+	void (*cs_take)(int id);
+	void (*cs_release)(int id);
 	struct hal_spi_dev_s *owner;
 	void *user_data;
 	struct hal_lock_s lock;
+	int   max_speed;
 };
 
 /*  for spi adapter drivers */

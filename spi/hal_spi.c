@@ -84,11 +84,15 @@ int hal_spi_transfer(struct hal_dev_s *dev,struct hal_spi_msg_s *msg)
 		}
 		
 		if(msg->cs_take == 1){
-			spi_dev->cs_take();
+			if(adpt->cs_take != NULL){
+				adpt->cs_take(spi_dev->cs_id);
+			}
 		}
 		transferd = adpt->transfer(adpt,msg);
 		if(msg->cs_release == 1){
-			spi_dev->cs_release();
+			if(adpt->cs_release != NULL){
+				adpt->cs_release(spi_dev->cs_id);
+			}
 		}
 		
 		hal_dev_unlock(&adpt->lock);
