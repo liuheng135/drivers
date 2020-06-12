@@ -9,6 +9,7 @@ enum sensor_cmd_e{
 	SENSOR_CMD_SET_RANGE1 = 0,
 	SENSOR_CMD_SET_RANGE2,
 	SENSOR_CMD_SET_RANGE3,
+	SENSOR_CMD_MEASURE,
 };
 
 enum sensor_status_e{

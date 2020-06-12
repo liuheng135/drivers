@@ -176,12 +176,9 @@ int icm20789_init(struct hal_dev_s *dev)
 	
 	spidev->cfg.speed = 8000000;
     hal_spi_configure(dev,&spidev->cfg);
-	
-	icm20789_delay_us(15);
+	icm20789_delay_us(50000);
 	icm20789_read_reg(dev,ICM_WHO_AM_I,&reg_val);
-	icm20789_delay_us(15);
-	icm20789_read_reg(dev,ICM_WHO_AM_I,&reg_val);
-	icm20789_delay_us(15);
+	icm20789_delay_us(100);
 	icm20789_read_reg(dev,ICM_WHO_AM_I,&reg_val);
 	if(reg_val != icm20789_WHO_AM_I_VALUE){
 		return -1;
@@ -189,25 +186,25 @@ int icm20789_init(struct hal_dev_s *dev)
 	
 	// Device Reset
 	icm20789_write_reg(dev,ICM_PWR_MGMT_1,BITS_H_RESET);
-	icm20789_delay_us(15000);
+	icm20789_delay_us(50000);
 	icm20789_write_reg(dev,ICM_SIGNAL_PATH_RESET,BIT_GYRO | BIT_ACC | BIT_TEMP);
-	icm20789_delay_us(15000);
+	icm20789_delay_us(20000);
 	// Clock Source PPL with Z axis gyro reference
 	icm20789_write_reg(dev,ICM_PWR_MGMT_1,ICM_CLK_SEL_PLLGYROZ);
-	icm20789_delay_us(15);
+	icm20789_delay_us(1000);
 	// Disable Primary I2C Interface
     icm20789_write_reg(dev, ICM_USER_CTRL, BIT_I2C_IF_DIS);
-    icm20789_delay_us(15);
+    icm20789_delay_us(1000);
 	icm20789_write_reg(dev, ICM_PWR_MGMT_2, 0x00);
-    icm20789_delay_us(15);
+    icm20789_delay_us(1000);
 	icm20789_write_reg(dev, ICM_SMPLRT_DIV, 0x00);
-    icm20789_delay_us(15);
+    icm20789_delay_us(1000);
 	// Gyro +/- 1000 DPS Full Scale
     icm20789_write_reg(dev, ICM_GYRO_CONFIG, BITS_FS_2000DPS);
-    icm20789_delay_us(15);
+    icm20789_delay_us(1000);
     // Accel +/- 8 G Full Scale
     icm20789_write_reg(dev, ICM_ACCEL_CONFIG, BITS_FS_8G);
-    icm20789_delay_us(15);
+    icm20789_delay_us(1000);
 	
 	spidev->cfg.speed = 8000000;
     hal_spi_configure(dev,&spidev->cfg);

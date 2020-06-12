@@ -77,10 +77,10 @@ int icm20789_baro_open(struct hal_dev_s *dev, uint16_t oflag)
 
 int icm20789_baro_read(struct hal_dev_s *dev, void *buffer, int size,int pos)
 {
-	struct mag_report_s *data = (struct mag_report_s *)buffer;
+	struct baro_report_s *data = (struct baro_report_s *)buffer;
 	uint8_t buff[6];
 	
-	if(size == sizeof(struct mag_report_s)){
+	if(size == sizeof(struct baro_report_s)){
 		return -1;
 	}
 	

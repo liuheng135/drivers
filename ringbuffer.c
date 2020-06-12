@@ -50,6 +50,7 @@ int ring_buffer_get(struct ring_buffer_s *buffer,char *ch,int size)
 		ch[i] = buffer->buffer[buffer->tail % buffer->size];
 		buffer->tail++;
 	}
+	
 	return get_size;
 }
 

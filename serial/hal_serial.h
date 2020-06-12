@@ -9,7 +9,7 @@
 
 typedef int serial_lock_t;
 
-#define SERIAL_BUFFER_LENGTH  64
+#define SERIAL_BUFFER_LENGTH  192
 
 #define DATA_BITS_5                     5
 #define DATA_BITS_6                     6
@@ -95,6 +95,7 @@ struct hal_serial_s
 	void (*enable_irq)(struct hal_serial_s *serial,int irq);
 	void (*disable_irq)(struct hal_serial_s *serial,int irq);
 	void            *priv;         /* Used by the arch-specific logic */
+	struct hal_serial_cfg_s cfg;
 };
 
 void serial_buffer_init(struct serial_buffer_s *buffer);

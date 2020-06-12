@@ -101,7 +101,7 @@ void board_initialize(void)
 	stm32f4xx_i2c_init();
 	icm20789_register();
 	ist8310_register();
-	//param_dev_register();
+	param_dev_register();
 	stm32f4xx_pwm_register();
 	icm20789_baro_register();
 }

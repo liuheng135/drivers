@@ -7,8 +7,6 @@
 #include "hal_device.h"
 #include "hal_serial.h"
 
-#define STM32F4XX_UART_BUFFER_LENGTH   64
-
 struct stm32f411x_gpio_s{
 	uint32_t      pin;
 	GPIO_TypeDef* port;
@@ -48,9 +46,9 @@ void stm32f411x_uart_gpio_init(struct stm32f411x_uart_config *port)
     LL_GPIO_Init(port->rxd->port, &GPIO_InitStruct);
 }	
 	
-
-int stm32f411x_uart_config(struct stm32f411x_uart_config *port,struct hal_serial_cfg_s *cfg)
+int stm32f411x_uart_config(struct hal_serial_s *serial,struct hal_serial_cfg_s *cfg)
 {
+	struct stm32f411x_uart_config *port = (struct stm32f411x_uart_config *)serial->priv;
     LL_USART_InitTypeDef  USART_InitStruct = {0};
 	
 	if(port->enable_clock != NULL){
@@ -79,8 +77,11 @@ int stm32f411x_uart_config(struct stm32f411x_uart_config *port,struct hal_serial
     USART_InitStruct.TransferDirection   = LL_USART_DIRECTION_TX_RX;
     USART_InitStruct.HardwareFlowControl = LL_USART_HWCONTROL_NONE;
     USART_InitStruct.OverSampling        = LL_USART_OVERSAMPLING_16;
+	
+	LL_USART_Disable(port->USARTx);
     LL_USART_Init(port->USARTx, &USART_InitStruct);
     LL_USART_ConfigAsyncMode(port->USARTx);
+	LL_USART_Enable(port->USARTx);
     
 	return 0;
 }
@@ -103,10 +104,38 @@ static void stm32f411x_irq_config(struct hal_serial_s *serial)
 int stm32f4_uart_init(struct hal_serial_s *serial)
 {
 	struct stm32f411x_uart_config *port = (struct stm32f411x_uart_config *)serial->priv;
+	LL_USART_InitTypeDef  USART_InitStruct = {0};
 	
 	stm32f411x_uart_gpio_init(port);
-	stm32f411x_uart_config(port,&serial_defauhal_cfg);
+	stm32f411x_uart_config(serial,&serial->cfg);
+	
+	if(port->enable_clock != NULL){
+		port->enable_clock(port->clock);
+	}else{
+		return -1;
+	}
+    
+    USART_InitStruct.BaudRate   = serial->cfg.buad_rate;
+    if (serial->cfg.data_bits == DATA_BITS_8)
+        USART_InitStruct.DataWidth  = LL_USART_DATAWIDTH_8B;
+    if (serial->cfg.stop_bits == STOP_BITS_1)
+        USART_InitStruct.StopBits   = LL_USART_STOPBITS_1;
+    else if (serial->cfg.stop_bits == STOP_BITS_2)
+        USART_InitStruct.StopBits   = LL_USART_STOPBITS_2;
+    if(serial->cfg.parity == PARITY_EVEN)
+        USART_InitStruct.Parity     = LL_USART_PARITY_EVEN;
+    else if(serial->cfg.parity == PARITY_ODD)
+        USART_InitStruct.Parity     = LL_USART_PARITY_ODD;
+    else 
+        USART_InitStruct.Parity     = LL_USART_PARITY_NONE;
+    
+    USART_InitStruct.TransferDirection   = LL_USART_DIRECTION_TX_RX;
+    USART_InitStruct.HardwareFlowControl = LL_USART_HWCONTROL_NONE;
+    USART_InitStruct.OverSampling        = LL_USART_OVERSAMPLING_16;
+    LL_USART_Init(port->USARTx, &USART_InitStruct);
+    LL_USART_ConfigAsyncMode(port->USARTx);
 	stm32f411x_irq_config(serial);
+	
 	LL_USART_Enable(port->USARTx);
 
 	return 0;
@@ -195,6 +224,7 @@ struct hal_serial_s stm32_serial1 = {
 	.enable_irq  = stm32f4_enable_irq,
 	.disable_irq = stm32f4_disable_irq, 
 	.init = stm32f4_uart_init,
+	.configure = stm32f411x_uart_config,
 	.priv = &uart1,
 };
 
@@ -230,9 +260,9 @@ struct hal_serial_s stm32_serial2 = {
 	.enable_irq  = stm32f4_enable_irq,
 	.disable_irq = stm32f4_disable_irq, 
 	.init = stm32f4_uart_init,
+	.configure = stm32f411x_uart_config,
 	.priv = &uart2,
 };
-
 
 struct stm32f411x_gpio_s uart3_txd_pin = {
 	.pin 			= LL_GPIO_PIN_8,
@@ -265,8 +295,8 @@ struct stm32f411x_gpio_s uart3_rxd_pin2 = {
 
 struct stm32f411x_uart_config uart3 = {
 	.USARTx          = USART3,
-	.txd             = &uart3_txd_pin2,
-	.rxd             = &uart3_rxd_pin2,
+	.txd             = &uart3_txd_pin,
+	.rxd             = &uart3_rxd_pin,
 	.clock           = LL_APB1_GRP1_PERIPH_USART3, 
 	.enable_clock    = LL_APB1_GRP1_EnableClock,
 	.irq_pre_pri     = 4,
@@ -280,6 +310,7 @@ struct hal_serial_s stm32_serial3 = {
 	.enable_irq  = stm32f4_enable_irq,
 	.disable_irq = stm32f4_disable_irq, 
 	.init = stm32f4_uart_init,
+	.configure = stm32f411x_uart_config,
 	.priv = &uart3,
 };
 
@@ -315,8 +346,24 @@ struct hal_serial_s stm32_serial4 = {
 	.enable_irq  = stm32f4_enable_irq,
 	.disable_irq = stm32f4_disable_irq, 
 	.init = stm32f4_uart_init,
+	.configure = stm32f411x_uart_config,
 	.priv = &uart4,
 };
+
+
+void stm32f4_serial_init(void)
+{
+	//serial_device_register(&stm32_serial1,"ttyS1",HAL_DEV_INT_RX | HAL_DEV_INT_TX | HAL_DEV_RDWR);
+	//serial_device_register(&stm32_serial2,"ttyS2",HAL_DEV_INT_RX | HAL_DEV_INT_TX | HAL_DEV_RDWR);
+	
+	
+	stm32_serial3.cfg = serial_defauhal_cfg;
+	stm32_serial3.cfg.buad_rate = 9600;
+	serial_device_register(&stm32_serial3,"ttyS3",HAL_DEV_INT_RX | HAL_DEV_INT_TX | HAL_DEV_RDWR);
+	stm32_serial4.cfg = serial_defauhal_cfg;
+	serial_device_register(&stm32_serial4,"ttyS4",HAL_DEV_INT_RX | HAL_DEV_INT_TX | HAL_DEV_RDWR);
+}
+
 
 void USART1_IRQHandler(void)
 {
@@ -411,16 +458,6 @@ void UART4_IRQHandler(void)
     /* exit interrupt */
     //hal_exit_interrupt();
 }
-
-
-void stm32f4_serial_init(void)
-{
-	//serial_device_register(&stm32_serial1,"ttyS1",HAL_DEV_INT_RX | HAL_DEV_INT_TX | HAL_DEV_RDWR);
-	//serial_device_register(&stm32_serial2,"ttyS2",HAL_DEV_INT_RX | HAL_DEV_INT_TX | HAL_DEV_RDWR);
-	serial_device_register(&stm32_serial3,"ttyS3",HAL_DEV_INT_RX | HAL_DEV_INT_TX | HAL_DEV_RDWR);
-	serial_device_register(&stm32_serial4,"ttyS4",HAL_DEV_INT_RX | HAL_DEV_INT_TX | HAL_DEV_RDWR);
-}
-
 
 
 

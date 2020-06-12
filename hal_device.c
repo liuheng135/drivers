@@ -132,8 +132,8 @@ int32_t hal_dev_open(char *name,uint16_t oflag)
             fd = -1;
             goto _out;
         }
-        
     }
+	
     if((dev->flag & HAL_DEV_STANDALONE)){
         if(dev->ref_count > 0){
             fd = -2;
@@ -148,7 +148,6 @@ int32_t hal_dev_open(char *name,uint16_t oflag)
         if(ret == 0){
             dev->ref_count++;
             dev->open_flag |= oflag;
-            
         }else{
             fd = -1;
         }
